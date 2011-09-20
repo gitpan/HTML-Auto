@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               HTML-Auto
-version:            0.01_2
+version:            0.01_3
 abstract:           The great new HTML::Auto!
 author:
     - Nuno Carvalho <smash@cpan.org>
