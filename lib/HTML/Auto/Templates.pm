@@ -20,48 +20,93 @@ my $templates = {
 
 'matrix' => <<'EOT'
 <style type="text/css">
-span {
+span.vertical {
     -webkit-transform: rotate(-90deg);
     -moz-transform: rotate(-90deg);
     writing-mode: tb-rl;
     filter: flipv fliph;
     display: block;
     width: 20px;
-    /*height: 70px;*/
     white-space: nowrap;
 }
-th {
-    padding-top: 50px;
+
+table.auto th {
+    padding-top: 70px;
     padding-bottom: 10px;
     padding-left: 5px;
     padding-right: 5px;
     width: 20px;
     background-color: #aaaaaa;
 }
-td {
+
+table.auto td {
     text-align: center;
-    width: 20px;
+    width: 30px;
     background-color: #eeeeee;
 }
-.fst {
-    width: 60px;
+
+table.auto td.fst {
+    width: 80px;
     font-weight: bold;
     background-color: #aaaaaa;
     padding: 5px;
 }
-.empty {
-    background-color: white;
+
+th.empty {
+    background-color: white !important;
 }
-.mid {
+
+table.auto td.mid {
     background-color: #cccccc;
 }
+
+td:hover {
+    background-color: #aaaaaa;
+}
+
+td.more_info { 
+    position:relative;
+	z-index:24;
+    text-decoration:none;
+    cursor: default;
+    color: black;
+	width: 80px;
+}
+
+td.more_info:hover{
+    z-index:25;
+}
+
+td.more_info td {
+	width: auto;
+}
+
+td.more_info span {
+	display: none;
+}
+
+td.more_info:hover span { 
+    display:block;
+    position:absolute;
+    border:1px solid #ccc;
+	min-width:24em;
+    background-color:#fff;
+	color:#000;
+    text-align: left;
+    font-size: 80%;
+    text-decoration: none;
+} 
+
+[% IF css %]
+[% css %]
+[% END %]
 </style>
 
-<table>
+<table class="auto">
 	<tr>
-		<th class="empty"></th>
+		<th class="empty"> </th>
 		[% FOREACH i IN cols %]
-			<th><span>[% i -%]</span></th>
+			<th> <span class="vertical">[% i -%]</span></th>
 		[% END %]
 	</tr>
 	[% i_c = 0 %]
@@ -70,11 +115,29 @@ td {
 		<td class="fst">[% lines.shift -%]</td>
 		[% j_c = 0 %]
 		[% FOREACH j IN i %]
-			<td[% IF i_c == j_c %] class="mid"[% END %]
-			[% FOREACH att IN attrs.$i_c.$j_c.keys %]
-				[% att %]="[% attrs.$i_c.$j_c.$att %]" 
-			[% END %]
-			>[% j %]</td>
+			<td
+				[% class = "" %]
+				[% IF i_c == j_c %]
+					[% class = "mid" %]
+				[% END %]
+				[% IF more.$i_c.$j_c %]
+					[% class = "more_info " _  class %]
+				[% END %]
+				[% IF attrs.$i_c.$j_c.class %]
+					[% class = class _ " " _ attrs.$i_c.$j_c.class %]
+				[% END %]
+				[% attrs.$i_c.$j_c.delete('class') %]
+				[% IF class.length != 0 %]
+					class="[% class %]" 
+				[% END %]
+				[% FOREACH att IN attrs.$i_c.$j_c.keys %]
+					[% att %]="[% attrs.$i_c.$j_c.$att %]" 
+				[% END %]
+			>[% j %]
+				[% IF more.$i_c.$j_c %]
+					<span>[% more.$i_c.$j_c %]</span> 
+				[% END %]
+			</td> 
 			[% j_c = j_c + 1 %]
 		[% END %]
 		</tr>
@@ -180,7 +243,7 @@ L<http://search.cpan.org/dist/HTML-Auto/>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2012 Nuno Carvalho.
+Copyright 2012 Project Natura.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published

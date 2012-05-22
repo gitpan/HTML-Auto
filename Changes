@@ -1,5 +1,10 @@
 Revision history for HTML-Auto
 
+0.03      Tue May 22 22:50:31 WEST 2012
+          Cells can have a hover pop-up.
+		  Additional CSS can be provided.
+		  Added some tests.
+
 0.02      Sat Apr 21 14:53:52 WEST 2012
           Update docs.
 
@@ -7,7 +12,7 @@ Revision history for HTML-Auto
           First version.
 
 0.01_3    Tue Sep 20 23:24:32 WEST 2011
-          Matrix elemets may be scalars.
+          Matrix elements may be scalars.
 
 0.01_2    Sun Jan 30 13:58:32 WET 2011
           Fix makefile dependencies.

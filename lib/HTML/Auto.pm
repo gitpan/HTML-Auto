@@ -21,7 +21,7 @@ Version 0.02
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 
 =head1 SYNOPSIS
@@ -69,6 +69,52 @@ Using attributes:
   print v(
           h($m)
         );
+
+With mouse-over span:
+
+  use HTML::Auto qw/matrix h v/;
+
+  my @cols = qw/c1 c2/;
+  my @lines = qw/l1 l2/;
+  my $data =
+     [[1,2],
+	  [3,
+	  { v=> 4,
+	    more_info => "This is a pop-up!"
+	  }]
+	 ];
+
+
+  my $m = matrix(\@cols,\@lines,$data);
+
+  print v(
+          h($m)
+        );
+
+Passing additional CSS:
+
+  use HTML::Auto qw/matrix h v/;
+
+  my @cols = qw/c1 c2/;
+  my @lines = qw/l1 l2/;
+  my $data =
+     [
+       [
+         {v => 1, a => { class => 'warn'}},
+         2
+       ],
+       [3,4]
+     ];
+
+  my $options = { css => '.warn { background-color: yellow !important; }' };
+
+  my $m = matrix(\@cols,\@lines,$data,$options);
+
+  print v(
+          h($m)
+        );
+
+
  
 =head1 SUBROUTINES/METHODS
 
@@ -89,22 +135,27 @@ sub matrix {
 
 	my $vals = [];
 	my $attrs = [];
+	my $more = [];
 
 	foreach my $row (@$data){
 		my $vrow = [];
 		my $arow = [];
+		my $mrow = [];
 		foreach(@$row){
 			if (ref($_)){
 				push @$vrow, $_->{v};
 				push @$arow, $_->{a};
+				push @$mrow, $_->{more_info};
 			}
 			else {
 				push @$vrow, $_;
 				push @$arow, undef;
+				push @$mrow, undef;
 			}
 		}
 		push @$vals, $vrow;
 		push @$attrs, $arow;
+		push @$more, $mrow;
 	}
 
 	my $vars = {
@@ -112,7 +163,10 @@ sub matrix {
 			lines => $lines,
 			vals => $vals,
 			attrs => $attrs,
+			more => $more,
 		};
+	$vars->{css} = $options->{css}
+		if $options->{css};
 	my $template_name = 'matrix';
 
 	__process($template_name, $vars);
@@ -217,7 +271,7 @@ L<http://search.cpan.org/dist/HTML-Auto/>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2012 Nuno Carvalho.
+Copyright 2012 Project Natura.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published
